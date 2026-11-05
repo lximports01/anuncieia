@@ -1,6 +1,151 @@
+
 <!DOCTYPE html>
-<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#101014"><meta name="description" content="AnuncieIA: crie anúncios, legendas e descrições de produtos em segundos."><title>AnuncieIA | Crie textos que vendem</title><style>
-:root{font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;color:#f6f6f8;background:#101014}*{box-sizing:border-box}body{margin:0}header{border-bottom:1px solid #292932;background:#15151b}nav{max-width:1100px;margin:auto;padding:19px 22px;display:flex;justify-content:space-between;align-items:center}.logo{font-size:25px;font-weight:900;letter-spacing:-1px}.logo span{color:#ff7b27}.tag{border:1px solid #393943;border-radius:99px;padding:7px 12px;font-size:12px;color:#ddd}main{max-width:1100px;margin:auto;padding:55px 22px}.hero{text-align:center;margin-bottom:44px}.eyebrow{color:#ff9b55;font-size:13px;font-weight:800;letter-spacing:2px}.hero h1{font-size:clamp(36px,6vw,64px);letter-spacing:-2px;margin:15px auto;max-width:760px;line-height:1.1}.hero h1 em{font-style:normal;color:#ff802d}.hero p{color:#b8b8c1;line-height:1.6}.layout{display:grid;grid-template-columns:1fr 1fr;gap:22px}.panel{background:#1b1b23;border:1px solid #33333e;border-radius:20px;padding:27px;min-width:0}.panel h2{font-size:21px;margin:0 0 7px}.hint{color:#a9a9b3;font-size:13px;margin:0 0 25px}label{display:block;font-size:13px;font-weight:700;margin:17px 0 8px}input,select,textarea{width:100%;border:1px solid #41414d;background:#111117;color:white;border-radius:10px;padding:13px 14px;font:inherit;outline:none}textarea{min-height:100px;resize:vertical}input:focus,select:focus,textarea:focus{border-color:#ff802d}button{border:0;border-radius:11px;padding:14px 18px;font:inherit;font-weight:800;cursor:pointer}button.primary{background:linear-gradient(120deg,#ff982e,#ff6426);color:#1a0c05;width:100%;margin-top:20px}button.secondary{background:#31313c;color:white}button:focus-visible{outline:3px solid #ffb77a;outline-offset:3px}.result{white-space:pre-wrap;line-height:1.75;color:#eee;background:#111117;border:1px dashed #4b4b58;border-radius:12px;padding:19px;min-height:305px;overflow-wrap:anywhere}.actions{display:flex;gap:10px;margin-top:15px;flex-wrap:wrap}.status{color:#ffb782;font-size:13px;min-height:20px;margin-top:10px}.features{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-top:27px}.feature{background:#1b1b23;border:1px solid #33333e;border-radius:15px;padding:19px}.feature b{color:#ff9144}.feature p{font-size:13px;color:#bdbdc7;line-height:1.5}footer{text-align:center;color:#888894;font-size:12px;padding:25px 15px;border-top:1px solid #292932;margin-top:35px}@media(max-width:750px){main{padding:35px 15px}.layout,.features{grid-template-columns:1fr}.panel{padding:20px}.hero{margin-bottom:25px}}
-</style></head><body><header><nav><div class="logo">Anuncie<span>IA</span></div><span class="tag">VERSÃO GRATUITA</span></nav></header><main><section class="hero"><div class="eyebrow">✦ SEU ASSISTENTE DE MARKETING</div><h1>Crie textos que <em>chamam atenção.</em></h1><p>Gere anúncios, legendas e descrições em segundos. Simples, rápido e gratuito.</p></section><div class="layout"><section class="panel"><h2>✍️ Criar conteúdo</h2><p class="hint">Preencha os campos para gerar seu texto.</p><form id="generator"><label for="kind">Tipo de conteúdo</label><select id="kind"><option value="anuncio">Anúncio de vendas</option><option value="instagram">Legenda para Instagram</option><option value="produto">Descrição de produto</option><option value="whatsapp">Mensagem para WhatsApp</option></select><label for="product">Produto ou serviço *</label><input id="product" maxlength="130" placeholder="Ex.: Tênis esportivo, lavagem automotiva" required><label for="details">Principais características</label><textarea id="details" maxlength="500" placeholder="Ex.: Confortável, entrega rápida, várias cores"></textarea><label for="price">Preço (opcional)</label><input id="price" maxlength="60" placeholder="Ex.: R$ 99,90"><label for="audience">Público-alvo (opcional)</label><input id="audience" maxlength="100" placeholder="Ex.: Jovens que gostam de esportes"><label for="tone">Estilo do texto</label><select id="tone"><option value="persuasivo">Persuasivo</option><option value="profissional">Profissional</option><option value="descontraido">Descontraído</option></select><button class="primary" type="submit">✦ Gerar meu texto</button></form></section><section class="panel"><h2>✨ Seu resultado</h2><p class="hint">Seu conteúdo aparecerá aqui, pronto para usar.</p><div class="result" id="result" aria-live="polite">Preencha o formulário ao lado e clique em “Gerar meu texto”.</div><div class="actions"><button class="secondary" id="copy" type="button">📋 Copiar texto</button><button class="secondary" id="again" type="button">↻ Outra versão</button></div><div class="status" id="status" role="status"></div></section></div><div class="features"><div class="feature"><b>⚡ Rápido</b><p>Crie textos de marketing em poucos segundos.</p></div><div class="feature"><b>📱 Prático</b><p>Use no celular ou computador, sem instalar nada.</p></div><div class="feature"><b>🎯 Personalizável</b><p>Escolha o estilo e descreva o que você vende.</p></div></div></main><footer>© <span id="year"></span> AnuncieIA · Gerador gratuito de textos com modelos personalizáveis. Não utiliza IA generativa nesta versão.</footer><script>
-const $=id=>document.getElementById(id);let generated='',counter=0;const clean=s=>s.trim().replace(/\s+/g,' ');const pick=(arr,n)=>arr[n%arr.length];function make(){const product=clean($('product').value),details=clean($('details').value),price=clean($('price').value),audience=clean($('audience').value),tone=$('tone').value,kind=$('kind').value;if(!product){$('product').focus();$('status').textContent='Informe o produto ou serviço.';return}const p=product,d=details?`\n⭐ Destaques: ${details}.`:'',v=price?`\n💰 Valor: ${price}.`:'',a=audience?`\n🎯 Ideal para: ${audience}.`:'';const openings={persuasivo:[`🚀 Conheça ${p}!`,`🔥 Uma ótima oportunidade: ${p}!`,`✨ Que tal descobrir ${p}?`],profissional:[`Apresentamos ${p}.`,`Conheça nossa solução: ${p}.`,`Confira os detalhes de ${p}.`],descontraido:[`😎 Olha só: ${p}!`,`👀 Já viu ${p}?`,`🙌 Chegou a hora de conhecer ${p}!`]};const intro=pick(openings[tone],counter++);const endings={persuasivo:'📩 Entre em contato para saber mais e faça seu pedido!',profissional:'Entre em contato para consultar disponibilidade e mais informações.',descontraido:'💬 Curtiu? Chama a gente e saiba mais!'};const hashtag='#'+p.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9]/g,'');let output='';if(kind==='anuncio')output=`${intro}\n\n${pick(['Dê mais destaque à sua escolha.','Uma opção para quem busca praticidade.','Descubra os detalhes e veja se combina com você.'],counter)}${d}${v}${a}\n\n${endings[tone]}`;if(kind==='instagram')output=`${intro} ✨\n\n${pick(['Tem novidade por aqui!','Uma escolha que merece atenção!','Confira o que preparamos para você!'],counter)}${d}${v}${a}\n\n${endings[tone]}\n\n${hashtag} #Novidades #Confira`;if(kind==='produto')output=`${p}\n\n${pick(['Conheça este produto e seus diferenciais.','Uma opção para considerar na sua próxima compra.','Veja as informações deste produto.'],counter)}${d}${v}${a}\n\n${endings[tone]}`;if(kind==='whatsapp')output=`Olá! 👋\n\n${intro}\n${d}${v}${a}\n\n${endings[tone]}`;generated=output;$('result').textContent=output;$('status').textContent='Texto gerado! Revise as informações antes de publicar.'} $('generator').addEventListener('submit',e=>{e.preventDefault();make()});$('again').addEventListener('click',make);$('copy').addEventListener('click',async()=>{if(!generated){$('status').textContent='Gere um texto primeiro.';return}try{await navigator.clipboard.writeText(generated);$('status').textContent='Texto copiado!'}catch(e){const t=document.createElement('textarea');t.value=generated;document.body.appendChild(t);t.select();const ok=document.execCommand('copy');t.remove();$('status').textContent=ok?'Texto copiado!':'Selecione o texto e copie manualmente.'}});$('year').textContent=new Date().getFullYear();
-</script></body></html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AnuncieIA — Crie anúncios e sites com IA</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0c0e14;color:white;font-family:Arial,sans-serif}
+header{padding:20px;background:#151821;border-bottom:1px solid #30333c;display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:25px;font-weight:bold}
+.logo span{color:#ff791f}
+header small{color:#aaa}
+main{max-width:950px;margin:30px auto;padding:15px}
+h1{text-align:center;font-size:32px;margin-bottom:8px}
+.sub{text-align:center;color:#aab0be;margin-bottom:28px}
+.options{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:22px}
+.options button{background:#20242e;color:white;border:1px solid #424650;border-radius:12px;padding:13px;cursor:pointer}
+.options button:hover{border-color:#ff791f}
+.chat{background:#171a23;border:1px solid #30343f;border-radius:18px;overflow:hidden}
+#messages{height:420px;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:15px}
+.msg{padding:14px 17px;border-radius:15px;max-width:90%;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.6}
+.user{background:#ff791f;color:#111;align-self:flex-end}
+.ai{background:#292d38;align-self:flex-start}
+.controls{display:flex;gap:10px;padding:15px;border-top:1px solid #30343f}
+textarea{flex:1;background:#242832;color:white;border:1px solid #424650;border-radius:12px;padding:13px;resize:vertical;min-height:55px;font:inherit}
+.send{background:#ff791f;border:0;border-radius:12px;padding:0 22px;font-weight:bold;cursor:pointer}
+.send:disabled{opacity:.5}
+.result{margin-top:20px;background:#171a23;border:1px solid #30343f;border-radius:15px;padding:20px}
+.result button{background:#ff791f;border:0;border-radius:8px;padding:12px;cursor:pointer;font-weight:bold;margin:5px}
+iframe{width:100%;height:380px;background:white;border:0;border-radius:8px;margin-top:12px}
+footer{text-align:center;color:#777;padding:25px}
+@media(max-width:600px){h1{font-size:25px}.controls{flex-direction:column}.send{padding:15px}}
+</style>
+</head>
+<body>
+<header>
+<div class="logo">Anuncie<span>IA</span> ✨</div>
+<small>Seu assistente criativo</small>
+</header>
+<main>
+<h1>O que vamos criar hoje?</h1>
+<p class="sub">Crie anúncios e páginas de vendas conversando com inteligência artificial.</p>
+<div class="options">
+<button onclick="suggest('Crie um anúncio profissional para Instagram de ')">📱 Instagram</button>
+<button onclick="suggest('Crie um anúncio persuasivo para WhatsApp de ')">💬 WhatsApp</button>
+<button onclick="suggest('Crie uma página de vendas completa em HTML para ')">🌐 Página de vendas</button>
+<button onclick="suggest('Crie um site profissional completo em HTML para ')">💻 Criar site</button>
+</div>
+<section class="chat">
+<div id="messages">
+<div class="msg ai">Olá! 👋 Sou a AnuncieIA. Posso criar anúncios, textos de marketing, páginas de vendas e sites. Conte o que você precisa!</div>
+</div>
+<div class="controls">
+<textarea id="prompt" placeholder="Ex.: Crie uma página de vendas para minha loja de roupas"></textarea>
+<button class="send" id="send" onclick="sendMessage()">Enviar ➤</button>
+</div>
+</section>
+<section class="result" id="result" hidden>
+<h2>🌐 Prévia da página criada</h2>
+<button onclick="downloadSite()">Baixar HTML</button>
+<button onclick="copySite()">Copiar código</button>
+<iframe id="preview" sandbox="allow-scripts"></iframe>
+</section>
+</main>
+<footer>© 2026 AnuncieIA — Crie com inteligência</footer>
+<script>
+const API="https://anuncieia-api.lximports01.workers.dev";
+const history=[];
+let generatedHTML="";
+const $=id=>document.getElementById(id);
+
+function suggest(text){
+ $("prompt").value=text;
+ $("prompt").focus();
+}
+function bubble(role,text){
+ const el=document.createElement("div");
+ el.className="msg "+(role==="user"?"user":"ai");
+ el.textContent=text;
+ $("messages").appendChild(el);
+ $("messages").scrollTop=$("messages").scrollHeight;
+ return el;
+}
+function extractHTML(text){
+ const match=text.match(/```html\s*([\s\S]*?)```/i);
+ if(match)return match[1].trim();
+ const start=text.search(/<!doctype html|<html[\s>]/i);
+ if(start>=0)return text.slice(start).replace(/```\s*$/,"").trim();
+ return "";
+}
+async function sendMessage(){
+ const prompt=$("prompt").value.trim();
+ if(!prompt)return;
+ $("prompt").value="";
+ $("send").disabled=true;
+ bubble("user",prompt);
+ const loading=bubble("ai","✨ AnuncieIA está criando...");
+ try{
+  const messages=[...history,{role:"user",content:prompt}];
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),60000);
+  let response;
+  try{
+   response=await fetch(API+"/chat",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({messages}),
+    signal:controller.signal
+   });
+  }finally{clearTimeout(timer)}
+  const data=await response.json();
+  if(!response.ok)throw Error(data.error||"Erro na API");
+  if(typeof data.reply!=="string")throw Error("Resposta inválida da IA");
+  loading.textContent=data.reply;
+  history.push({role:"user",content:prompt},{role:"assistant",content:data.reply});
+  if(history.length>12)history.splice(0,history.length-12);
+  const html=extractHTML(data.reply);
+  if(html){
+   generatedHTML=html;
+   $("preview").srcdoc=html;
+   $("result").hidden=false;
+  }
+ }catch(e){
+  loading.textContent="Não foi possível conectar à IA: "+e.message;
+ }finally{$("send").disabled=false}
+}
+function downloadSite(){
+ if(!generatedHTML)return;
+ const blob=new Blob([generatedHTML],{type:"text/html"});
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement("a");
+ a.href=url;a.download="pagina-anuncieia.html";a.click();
+ setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+async function copySite(){
+ if(!generatedHTML)return;
+ try{
+  await navigator.clipboard.writeText(generatedHTML);
+  alert("Código copiado!");
+ }catch(e){alert("Não foi possível copiar automaticamente.")}
+}
+$("prompt").addEventListener("keydown",e=>{
+ if(e.key==="Enter"&&!e.shiftKey){
+  e.preventDefault();sendMessage();
+ }
+});
+</script>
+</body>
+</html>
